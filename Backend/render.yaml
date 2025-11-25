@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: justificaciones-backend
+    runtime: python
+    region: ohio
+    plan: free
+
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn run:app"
+
+    envVars:
+      - key: FLASK_ENV
+        value: production
+
+      - key: PYTHON_VERSION
+        value: 3.12.0
