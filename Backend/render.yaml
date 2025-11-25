@@ -5,8 +5,8 @@ services:
     region: ohio
     plan: free
 
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn run:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
 
     envVars:
       - key: FLASK_ENV
