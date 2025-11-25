@@ -1,16 +1,30 @@
 import os
 
 class Config:
-    # Render usa DATABASE_URL (NO el wallet)
+
+    # ============================================
+    # 🔹 1. BASE DE DATOS (Render + Local)
+    # ============================================
+
+    # Render obtiene la conexión desde DATABASE_URL
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
-    # Claves
+    # Si estás trabajando local SIN Oracle → usar SQLite
+    if not SQLALCHEMY_DATABASE_URI:
+        SQLALCHEMY_DATABASE_URI = "sqlite:///local.db"
+
+    # ============================================
+    # 🔹 2. CLAVES SEGURAS
+    # ============================================
+
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-key")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Pool optimizado para Oracle + Render
+    # ============================================
+    # 🔹 3. OPTIMIZACIÓN PARA ORACLE EN RENDER
+    # ============================================
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_size": 10,
         "max_overflow": 15,
@@ -19,8 +33,12 @@ class Config:
         "pool_pre_ping": True
     }
 
-    # Uploads
+    # ============================================
+    # 🔹 4. CONFIGURACIÓN DE UPLOADS
+    # ============================================
+
     BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
+    # Límite de subida: 16 MB
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024

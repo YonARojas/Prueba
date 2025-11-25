@@ -5,8 +5,22 @@ services:
     region: ohio
     plan: free
 
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn run:app
+    buildCommand: |
+      pip install -r requirements.txt
+
+      # 🟦 Si existe el wallet base64 lo reconstruimos
+      if [ -n "$WALLET_B64" ]; then
+        echo "🔐 Reconstruyendo Oracle Wallet..."
+        mkdir -p Wallet
+        echo "$WALLET_B64" | base64 -d > Wallet/wallet.zip
+        unzip Wallet/wallet.zip -d Wallet
+      else
+        echo "⚠️ WALLET_B64 no fue proporcionado"
+      fi
+
+    startCommand: |
+      export TNS_ADMIN=$PWD/Wallet
+      gunicorn run:app
 
     envVars:
       - key: FLASK_ENV
@@ -14,3 +28,18 @@ services:
 
       - key: PYTHON_VERSION
         value: 3.12.0
+
+      # 🔹 Render usa esto obligatoriamente
+      - key: DATABASE_URL
+        sync: false
+
+      # 🔹 Wallet codificado (lo subirás luego en Render Dashboard)
+      - key: WALLET_B64
+        sync: false
+
+      # 🔹 Claves seguras
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: JWT_SECRET_KEY
+        generateValue: true

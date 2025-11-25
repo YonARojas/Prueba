@@ -1,0 +1,20 @@
+# Entorno virtual
+venv/
+ENV/
+env/
+*.pyc
+__pycache__/
+
+# Archivos sensibles
+.env
+*.zip
+*.b64.txt
+
+# Wallet de Oracle (NO subir)
+Wallet_Justificacion/
+wallet.zip
+wallet.b64.txt
+
+# Carpetas temporales
+instance/
+uploads/
