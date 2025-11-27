@@ -14,46 +14,32 @@ fi
 echo "🔐 Reconstruyendo Oracle Wallet desde Base64..."
 
 # ================================================
-# 2) Crear carpeta Wallet local
+# 2) Crear carpeta app/Wallet
 # ================================================
-mkdir -p Wallet
+APP_WALLET_DIR="app/Wallet"
+mkdir -p "$APP_WALLET_DIR"
 
 # ================================================
-# 3) Decodificar Base64 → Wallet/wallet.zip
+# 3) Decodificar Base64 → app/Wallet/wallet.zip
 # ================================================
-echo "$WALLET_B64" | base64 -d > Wallet/wallet.zip || true
+echo "$WALLET_B64" | base64 -d > "$APP_WALLET_DIR/wallet.zip" || true
 
-# Validar creación del zip
-if [ ! -s "Wallet/wallet.zip" ]; then
-  echo "❌ ERROR: No se generó Wallet/wallet.zip"
+if [ ! -s "$APP_WALLET_DIR/wallet.zip" ]; then
+  echo "❌ ERROR: No se generó $APP_WALLET_DIR/wallet.zip"
   exit 1
 fi
 
 # ================================================
-# 4) Extraer contenido del wallet
+# 4) Extraer contenido del Wallet
 # ================================================
-unzip -o Wallet/wallet.zip -d Wallet >/dev/null 2>&1
+unzip -o "$APP_WALLET_DIR/wallet.zip" -d "$APP_WALLET_DIR" >/dev/null 2>&1
 
-# Validar archivos esenciales
-if [ ! -f "Wallet/tnsnames.ora" ] || [ ! -f "Wallet/sqlnet.ora" ]; then
+if [ ! -f "$APP_WALLET_DIR/tnsnames.ora" ] || [ ! -f "$APP_WALLET_DIR/sqlnet.ora" ]; then
   echo "❌ ERROR: Wallet incompleto. Faltan archivos necesarios."
   exit 1
 fi
 
-echo "📁 Archivos en Wallet local:"
-ls -l Wallet
+echo "📁 Archivos en $APP_WALLET_DIR:"
+ls -l "$APP_WALLET_DIR"
 
-echo "📦 Wallet reconstruido. Copiando al directorio de ejecución..."
-
-# ================================================
-# 5) Copiar al directorio real de Render
-# ================================================
-RUNTIME_WALLET="/opt/render/project/src/Wallet"
-
-mkdir -p "$RUNTIME_WALLET"
-cp -r Wallet/* "$RUNTIME_WALLET"
-
-echo "📁 Archivos en $RUNTIME_WALLET:"
-ls -l "$RUNTIME_WALLET"
-
-echo "✅ Wallet Oracle instalado correctamente en el entorno de Render."
+echo "🎉 Wallet Oracle instalado correctamente en app/Wallet"
