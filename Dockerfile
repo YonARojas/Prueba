@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
 # ================================
 WORKDIR /opt/oracle
 
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip -O instant.zip && \
+# Basiclite oficial (21.13)
+RUN wget https://download.oracle.com/otn_software/instantclient/instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip -O instant.zip && \
     unzip instant.zip && \
     rm instant.zip && \
     mv instantclient* instantclient
