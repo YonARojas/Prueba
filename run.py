@@ -1,44 +1,38 @@
 import os
-import sys
-import oracledb
 from app import create_app
 
 # ===========================================================
-# 🚀 1. CONFIGURACIÓN DE ORACLE CLIENT + WALLET (THICK MODE)
+# 🚀 1. CONFIGURACIÓN PARA ORACLE EN MODO THIN (Render compatible)
 # ===========================================================
 
 WALLET_DIR = os.path.join(os.getcwd(), "Wallet")
-os.environ["TNS_ADMIN"] = WALLET_DIR  # Necesario para SQLAlchemy + cx_Oracle
+os.environ["TNS_ADMIN"] = WALLET_DIR  # Necesario para SQLAlchemy + oracledb thin
 
-def init_oracle():
-    """Inicializa el Oracle Client en modo Thick y valida el Wallet."""
-    print("🔧 Inicializando Oracle Client...")
+def validate_wallet():
+    """Verifica que los archivos del Wallet existen, pero NO inicia modo thick."""
+    print("🔧 Verificando Wallet...")
 
     if not os.path.isdir(WALLET_DIR):
         print(f"❌ ERROR: No existe el directorio Wallet: {WALLET_DIR}")
-        sys.exit(1)
+        return False
 
     required_files = ["cwallet.sso", "ewallet.p12", "tnsnames.ora"]
     missing = [f for f in required_files if not os.path.isfile(os.path.join(WALLET_DIR, f))]
 
     if missing:
         print(f"❌ ERROR: Faltan archivos en el Wallet: {missing}")
-        sys.exit(1)
+        return False
 
-    try:
-        oracledb.init_oracle_client(lib_dir=None)  # Render usa lib propia
-        print("✅ Oracle Client iniciado correctamente (Thick Mode).")
-    except Exception as e:
-        print(f"❌ ERROR iniciando Oracle Client: {e}")
-        sys.exit(1)
+    print("✅ Wallet verificado correctamente (Modo THIN).")
+    return True
 
 
-# Inicializar Oracle Client al arrancar
-init_oracle()
+# Validar Wallet
+validate_wallet()
 
 
 # ===========================================================
-# 🚀 2. INICIAR FLASK APP
+# 🚀 2. INICIAR FLASK APP (sin intentar thick mode)
 # ===========================================================
 
 app = create_app()
