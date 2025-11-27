@@ -14,14 +14,13 @@ fi
 echo "🔐 Reconstruyendo Oracle Wallet desde Base64..."
 
 # ================================================
-# 2) Crear carpeta Wallet
+# 2) Crear carpeta Wallet local
 # ================================================
 mkdir -p Wallet
 
 # ================================================
 # 3) Decodificar Base64 → Wallet/wallet.zip
 # ================================================
-# '|| true' evita fallos por saltos de línea
 echo "$WALLET_B64" | base64 -d > Wallet/wallet.zip || true
 
 # Validar creación del zip
@@ -35,10 +34,26 @@ fi
 # ================================================
 unzip -o Wallet/wallet.zip -d Wallet >/dev/null 2>&1
 
-# Validación extra: verificar archivos esenciales
+# Validar archivos esenciales
 if [ ! -f "Wallet/tnsnames.ora" ] || [ ! -f "Wallet/sqlnet.ora" ]; then
   echo "❌ ERROR: Wallet incompleto. Faltan archivos necesarios."
   exit 1
 fi
 
-echo "✅ Wallet Oracle reconstruido correctamente."
+echo "📁 Archivos en Wallet local:"
+ls -l Wallet
+
+echo "📦 Wallet reconstruido. Copiando al directorio de ejecución..."
+
+# ================================================
+# 5) Copiar al directorio real de Render
+# ================================================
+RUNTIME_WALLET="/opt/render/project/src/Wallet"
+
+mkdir -p "$RUNTIME_WALLET"
+cp -r Wallet/* "$RUNTIME_WALLET"
+
+echo "📁 Archivos en $RUNTIME_WALLET:"
+ls -l "$RUNTIME_WALLET"
+
+echo "✅ Wallet Oracle instalado correctamente en el entorno de Render."
