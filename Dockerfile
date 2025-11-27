@@ -13,12 +13,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # ================================
-# 3) Instalar Oracle Instant Client
+# 3) Instalar Oracle Instant Client (BASIC, no Lite)
 # ================================
 WORKDIR /opt/oracle
 
-# Basiclite oficial (21.13)
-RUN wget https://download.oracle.com/otn_software/instantclient/instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip -O instant.zip && \
+# ⚠️ Versión FULL BASIC (incluye libclntsh.so)
+RUN wget https://download.oracle.com/otn_software/instantclient/instantclient-basic-linux.x64-21.13.0.0.0dbru.zip -O instant.zip && \
     unzip instant.zip && \
     rm instant.zip && \
     mv instantclient* instantclient
@@ -41,7 +41,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 ENV WALLET_DIR=/app/Wallet
 RUN mkdir -p /app/Wallet
 
-# Copiar script de wallet
 COPY build.sh .
 RUN chmod +x build.sh
 
