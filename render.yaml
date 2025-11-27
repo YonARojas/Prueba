@@ -10,18 +10,18 @@ services:
 
       # 🟦 Si existe el wallet base64 lo reconstruimos
       if [ -n "$WALLET_B64" ]; then
-        echo "🔐 Reconstruyendo Oracle Wallet..."
-        mkdir -p app/Wallet
-        echo "$WALLET_B64" | base64 -d > app/Wallet/wallet.zip
-        unzip -o app/Wallet/wallet.zip -d app/Wallet
-        ls -l app/Wallet
+        echo "🔐 Reconstruyendo Oracle Wallet en /app/Wallet ..."
+        mkdir -p /app/Wallet
+        echo "$WALLET_B64" | base64 -d > /app/Wallet/wallet.zip
+        unzip -o /app/Wallet/wallet.zip -d /app/Wallet
+        ls -l /app/Wallet
       else
         echo "⚠️ WALLET_B64 no fue proporcionado"
       fi
 
     startCommand: |
-      export TNS_ADMIN=$PWD/app/Wallet
-      gunicorn run:app       # run.py está fuera de /app
+      export TNS_ADMIN=/app/Wallet
+      gunicorn run:app
 
     envVars:
       - key: FLASK_ENV
@@ -30,15 +30,12 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.0
 
-      # Obligatorio en Render
       - key: DATABASE_URL
         sync: false
 
-      # Wallet codificado en base64
       - key: WALLET_B64
         sync: false
 
-      # Claves seguras
       - key: SECRET_KEY
         generateValue: true
 

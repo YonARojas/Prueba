@@ -5,8 +5,10 @@ from app import create_app
 # 🚀 1. CONFIGURACIÓN PARA ORACLE EN MODO THIN (Render compatible)
 # ===========================================================
 
-WALLET_DIR = os.path.join(os.getcwd(), "Wallet")
-os.environ["TNS_ADMIN"] = WALLET_DIR  # Necesario para SQLAlchemy + oracledb thin
+# Render descomprime el wallet SIEMPRE en /app/Wallet
+WALLET_DIR = "/app/Wallet"
+os.environ["TNS_ADMIN"] = WALLET_DIR
+
 
 def validate_wallet():
     """Verifica que los archivos del Wallet existen, pero NO inicia modo thick."""
